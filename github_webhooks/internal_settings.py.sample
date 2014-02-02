@@ -1,0 +1,28 @@
+# Copyright (c) 2014 Intel Corporation. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# These are internal settings that contain sensitive information, and thus
+# should not be part of the main code repository.
+
+# Secret used in HMAC signatures for the HTTP requests sent by the GitHub web
+# hooks.
+GITHUB_HOOK_SECRET = ''
+
+# Username of the GitHub user that will post the buildbot status comments to
+# pull requests.
+GITHUB_USERNAME = ''
+
+# Access token (not password) of the GitHub user that will post the buildbot
+# status comments to pull requests. See
+# https://developer.github.com/v3/oauth/#non-web-application-flow and
+# https://github.com/blog/1509-personal-api-tokens for more information.
+GITHUB_ACCESS_TOKEN = ''
+
+# Base Buildbot URL. If http://example.com/buildbot/builders/crosswalk-linux is
+# a valid URL, TRYBOT_BASE_URL should be "http://example.com/buildbot".
+TRYBOT_BASE_URL = ''
+
+# Buildbot URL to which we are going to send a new patch.
+# It should be something like http://example.com/send_try_patch
+TRYBOT_SEND_PATCH_URL = ''

@@ -1,0 +1,3 @@
+*.pyc
+db.sqlite3
+/github_webhooks/internal_settings.py
