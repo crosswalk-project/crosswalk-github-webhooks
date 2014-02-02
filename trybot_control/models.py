@@ -67,7 +67,7 @@ class PullRequest(models.Model):
         Creates or updates the Trybot comment in a pull request with the status
         of all builders registered so far.
         """
-        message =  'Testing patch series with _%s_ as its head.\n\n' % \
+        message =  'Testing patch series with %s as its head.\n\n' % \
                    self.head_sha
         message += 'Bot | Status\n'
         message += '--- | ------\n'
