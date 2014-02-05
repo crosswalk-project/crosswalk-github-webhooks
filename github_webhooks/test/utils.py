@@ -32,3 +32,37 @@ class GitHubEventClient(Client):
             *args,
             **kwargs
         )
+
+
+def mock_pull_request_payload():
+    """
+    Returns a Pull Request payload with a reasonable amount of fields present
+    in an actual payload for testing.
+    Callers can later override the values in the dictionary to their liking.
+    """
+    return {
+        'action': 'opened',
+        'pull_request': {
+            'number': 42,
+            'patch_url': 'https://path/to/42.patch',
+            'title': 'Hello world',
+            'body': 'some description',
+            'user': {
+                'login': 'rakuco',
+            },
+            'head': {
+                'sha': 'deadbeef',
+                'repo': {
+                    'name': 'crosswalk-fork',
+                    'full_name': 'rakuco/crosswalk-fork',
+                },
+            },
+            'base': {
+                'ref': 'master',
+                'repo': {
+                    'name': 'crosswalk',
+                    'full_name': 'crosswalk-project/crosswalk',
+                },
+            },
+        },
+    }

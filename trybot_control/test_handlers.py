@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.test.client import Client
 
-from github_webhooks.test.utils import GitHubEventClient
+from github_webhooks.test.utils import GitHubEventClient, mock_pull_request_payload
 from trybot_control.models import *
 
 
@@ -20,31 +20,7 @@ class HandlePullRequestTestCase(TestCase):
     @mock.patch('requests.post')
     @mock.patch('requests.get')
     def test_success(self, mock_requests_get, mock_requests_post):
-        payload = {
-            'action': 'opened',
-            'pull_request': {
-                'number': 42,
-                'patch_url': 'https://path/to/42.patch',
-                'title': 'Hello world',
-                'user': {
-                    'login': 'rakuco',
-                },
-                'head': {
-                    'sha': 'deadbeef',
-                    'repo': {
-                        'name': 'crosswalk-fork',
-                        'full_name': 'rakuco/crosswalk-fork',
-                    },
-                },
-                'base': {
-                    'ref': 'master',
-                    'repo': {
-                        'name': 'crosswalk',
-                        'full_name': 'crosswalk-project/crosswalk',
-                    },
-                },
-            },
-        }
+        payload = mock_pull_request_payload()
 
         get_response = mock.Mock()
         get_response.status_code = 200
@@ -75,12 +51,7 @@ class HandlePullRequestTestCase(TestCase):
 
     @mock.patch('requests.get')
     def test_patch_fetch_error(self, mock_requests_get):
-        payload = {
-            'action': 'opened',
-            'pull_request': {
-                'patch_url': 'https://path/to/42.patch',
-            },
-        }
+        payload = mock_pull_request_payload()
 
         mock_response = mock.Mock()
         mock_response.status_code = 404
@@ -90,12 +61,14 @@ class HandlePullRequestTestCase(TestCase):
         self.assertEqual(PullRequest.objects.count(), 0)
 
     def test_ignored_action(self):
-        payload = {'action': 'closed'}
+        payload = mock_pull_request_payload()
+
+        payload['action'] = 'closed'
         response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(PullRequest.objects.count(), 0)
 
-        payload = {'action': 'reopened'}
+        payload['action'] = 'reopened'
         response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(PullRequest.objects.count(), 0)
