@@ -47,14 +47,17 @@ def mock_pull_request_payload():
             'patch_url': 'https://path/to/42.patch',
             'title': 'Hello world',
             'body': 'some description',
+            'html_url': 'http://pr.com',
             'user': {
                 'login': 'rakuco',
+                'html_url': 'http://rakuco.com',
             },
             'head': {
                 'sha': 'deadbeef',
                 'repo': {
                     'name': 'crosswalk-fork',
                     'full_name': 'rakuco/crosswalk-fork',
+                    'html_url': 'http://fork.com',
                 },
             },
             'base': {

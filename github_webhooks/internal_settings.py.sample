@@ -26,3 +26,27 @@ TRYBOT_BASE_URL = ''
 # Buildbot URL to which we are going to send a new patch.
 # It should be something like http://example.com/send_try_patch
 TRYBOT_SEND_PATCH_URL = ''
+
+### JIRA parameters ###
+
+# URL of the Jira server to update
+JIRA_SERVER = ''
+
+# Username of the Jira user that will comment on issues
+JIRA_USER = ''
+
+# The password of the Jira user
+JIRA_PASSWORD = ''
+
+# Enable or disable the client-side SSL certificate validation. Preferrably
+# this would be True, but in some setups it may need to be False
+JIRA_VERIFY_SSL = True
+
+# The Jira project string used as a prefix for issues IDs
+JIRA_PROJECT = ''
+
+# The ID of the "Resolve" transition
+JIRA_TRANSITION_RESOLVE_ID = ''
+
+# The ID of the "Fixed" resolution
+JIRA_RESOLUTION_FIXED_ID = ''
