@@ -62,6 +62,11 @@ def handle_pull_request(sender, **kwargs):
     pr_body = payload['pull_request']['body']
     pr_action = payload['action']
 
+    # This happens when a pull request only has a title and no message body.
+    if pr_body is None:
+        logging.info('Pull request %d has an empty body. Skipping.')
+        return
+
     jira = JiraHelper()
     for issue in search_issues(pr_body):
         if pr_action == 'opened':

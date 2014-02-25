@@ -32,7 +32,12 @@ class JiraUpdaterTestCase(TestCase):
     @patch('jira_updater.jirahelper.JIRA')
     def test_no_issue(self, jira_mock):
         payload = mock_pull_request_payload()
+
         payload['pull_request']['body'] = 'This PR does not fix any issue'
+        handle_pull_request(None, payload=payload)
+        self.assertEqual(jira_mock.called, False)
+
+        payload['pull_request']['body'] = None
         handle_pull_request(None, payload=payload)
         self.assertEqual(jira_mock.called, False)
 
