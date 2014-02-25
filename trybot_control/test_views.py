@@ -31,6 +31,20 @@ class BuildbotEventTest(TestCase):
                 'build': {
                     'builderName': 'crosswalk-linux',
                     'number': 42,
+                    'properties': [('issue', 97, '')],
+                }
+            }
+        }]
+        response = self.client.post(self.url, {'packets': json.dumps(packets)})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(TrybotBuild.objects.count(), 0)
+
+        packets = [{
+            'event': 'buildStarted',
+            'payload': {
+                'build': {
+                    'builderName': 'crosswalk-linux',
+                    'number': 42,
                     'properties': [('issue', 3, '')],
                 }
             }

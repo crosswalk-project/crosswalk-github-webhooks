@@ -36,7 +36,6 @@ def make_trybot_payload(pull_request):
         'project': pull_request['base']['repo']['name'],
         'repository': pull_request['base']['repo']['name'],
         'branch': pull_request['base']['ref'],
-        'issue': pull_request['number'],
         'patch': patch_response.text,
     }
 
@@ -71,9 +70,14 @@ def handle_pull_request(sender, **kwargs):
                              data=json.dumps({'body': message}))
     comment_id = response.json()['id']
 
-    PullRequest.objects.create(number=pull_request_number,
-                               head_sha=sha,
-                               repo_path=repo_path,
-                               comment_id=comment_id)
+    pr_object = PullRequest.objects.create(number=pull_request_number,
+                                           head_sha=sha,
+                                           repo_path=repo_path,
+                                           comment_id=comment_id)
+
+    # FIXME(rakuco): This is a bit too fragile, we create this object in the
+    # make_trybot_payload() call but it needs this to have all the information
+    # Buildbot needs.
+    trybot_payload['number'] = pr_object.pk
 
     requests.post(settings.TRYBOT_SEND_PATCH_URL, data=trybot_payload)
