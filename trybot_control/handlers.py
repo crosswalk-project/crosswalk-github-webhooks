@@ -33,7 +33,7 @@ def make_trybot_payload(pull_request):
         'name': pull_request['title'],
         'email': 'noreply@01.org',
         'revision': pull_request['head']['sha'],
-        'project': 'crosswalk',
+        'project': pull_request['base']['repo']['name'],
         'repository': pull_request['base']['repo']['name'],
         'branch': pull_request['base']['ref'],
         'issue': pull_request['number'],
