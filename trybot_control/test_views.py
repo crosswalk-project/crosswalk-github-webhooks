@@ -190,7 +190,6 @@ class BuildbotEventTest(TestCase):
             'payload': {
                 'build': {
                     'properties': [('issue', 3, '')],
-                    'results': 0,
                 }
             }
         }]

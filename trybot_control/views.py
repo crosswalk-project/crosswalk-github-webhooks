@@ -46,14 +46,13 @@ def parse_buildbot_packet(packet):
     except KeyError:
         raise ValueError('Got a packet without an "issue" property.')
 
-    status = build.get('results') # Not all events have one.
-    if status is not None:
-        # Buildbot status codes:
-        # 0=Success, 1=Warnings, 2=Failure, 3=Skipped, 4=Exception, 5=Retry
-        if status < 2:
-            status = STATUS_SUCCESS
-        else:
-            status = STATUS_FAILURE
+    # Buildbot status codes:
+    # 0=Success, 1=Warnings, 2=Failure, 3=Skipped, 4=Exception, 5=Retry
+    status = build.get('results', 0)
+    if status < 2:
+        status = STATUS_SUCCESS
+    else:
+        status = STATUS_FAILURE
 
     return {'event_name': packet['event'],
             'status': status,
