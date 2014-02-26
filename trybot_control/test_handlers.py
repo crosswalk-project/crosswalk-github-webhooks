@@ -18,6 +18,41 @@ class HandlePullRequestTestCase(TestCase):
 
     @mock.patch('requests.post')
     @mock.patch('requests.get')
+    def test_trybot_payload(self, mock_requests_get, mock_requests_post):
+        payload = mock_pull_request_payload()
+
+        get_response = mock.Mock()
+        get_response.status_code = 200
+        get_response.text = '+++ some/file\n--- some/file\n+ new line\n'
+        get_response.json.return_value = {'id': 3}
+        mock_requests_get.return_value = get_response
+
+        # One mock for each requests.post() call in the handler.
+        post_response_comment = mock.Mock()
+        post_response_comment.json.return_value = {'id': 1234}
+        post_response_send_to_trybot = mock.Mock()
+
+        mock_requests_post.side_effects = (post_response_comment,
+                                           post_response_send_to_trybot)
+
+        self.assertEqual(PullRequest.objects.count(), 0)
+        response = self.client.post(self.url, payload)
+        self.assertEqual(PullRequest.objects.count(), 1)
+        self.assertEqual(mock_requests_post.call_count, 2)
+        payload = mock_requests_post.call_args[1]['data']
+        expected_payload = {'user': u'rakuco',
+                            'name': u'Hello world',
+                            'email': 'noreply@01.org',
+                            'revision': u'deadbeef',
+                            'project': u'crosswalk',
+                            'repository': u'crosswalk',
+                            'branch': u'master',
+                            'patch': '+++ some/file\n--- some/file\n+ new line\n',
+                            'issue': PullRequest.objects.get(pk=1).pk}
+        self.assertEqual(payload, expected_payload)
+
+    @mock.patch('requests.post')
+    @mock.patch('requests.get')
     def test_success(self, mock_requests_get, mock_requests_post):
         payload = mock_pull_request_payload()
 

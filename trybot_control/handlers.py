@@ -78,6 +78,6 @@ def handle_pull_request(sender, **kwargs):
     # FIXME(rakuco): This is a bit too fragile, we create this object in the
     # make_trybot_payload() call but it needs this to have all the information
     # Buildbot needs.
-    trybot_payload['number'] = pr_object.pk
+    trybot_payload['issue'] = pr_object.pk
 
     requests.post(settings.TRYBOT_SEND_PATCH_URL, data=trybot_payload)
