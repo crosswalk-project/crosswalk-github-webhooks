@@ -38,6 +38,12 @@ def dispatch_pull_request(request):
         return HttpResponseNotFound()
 
     payload = json.loads(request.POST['payload'])
+
+    # This is a test payload GitHub sends when we add a new hook.
+    # It does not contain the payload we expect, so just ignore it.
+    if 'zen' in payload:
+        return HttpResponse()
+
     pull_request_changed.send(sender=None, payload=payload)
 
     return HttpResponse()
