@@ -24,10 +24,8 @@ class HandlePullRequestTestCase(TestCase):
         get_response = mock.Mock()
         get_response.status_code = 200
         get_response.text = '+++ some/file\n--- some/file\n+ new line\n'
-        mock_requests_get.return_value = get_response
-        post_response = requests.Response()
-        get_response.status_code = 200
         get_response.json.return_value = {'id': 3}
+        mock_requests_get.return_value = get_response
         response = self.client.post(self.url, payload)
         self.assertEqual(PullRequest.objects.count(), 1)
         pr = PullRequest.objects.get(pk=1)
