@@ -6,7 +6,6 @@ import mock
 
 from django.core.urlresolvers import reverse
 from django.test import TestCase
-from django.test.client import Client
 
 from github_webhooks.test.utils import GitHubEventClient, mock_pull_request_payload
 from trybot_control.models import *
