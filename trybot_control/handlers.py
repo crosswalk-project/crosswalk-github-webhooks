@@ -74,6 +74,7 @@ def handle_pull_request(sender, **kwargs):
                                            head_sha=sha,
                                            repo_path=repo_path,
                                            comment_id=comment_id)
+    pr_object.report_build_status()
 
     # FIXME(rakuco): This is a bit too fragile, we create this object in the
     # make_trybot_payload() call but it needs this to have all the information

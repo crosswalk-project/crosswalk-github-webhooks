@@ -38,7 +38,7 @@ class HandlePullRequestTestCase(TestCase):
         self.assertEqual(PullRequest.objects.count(), 0)
         response = self.client.post(self.url, payload)
         self.assertEqual(PullRequest.objects.count(), 1)
-        self.assertEqual(mock_requests_post.call_count, 2)
+        self.assertEqual(mock_requests_post.call_count, 3)
         payload = mock_requests_post.call_args[1]['data']
         expected_payload = {'user': u'rakuco',
                             'name': u'Hello world',
