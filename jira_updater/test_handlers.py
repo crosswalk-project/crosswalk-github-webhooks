@@ -4,10 +4,10 @@
 
 from mock import patch, ANY, Mock
 
-from django.test import TestCase
-from django.test.client import Client
 from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.test import TestCase
+from django.test.client import Client
 
 from github_webhooks.test.utils import GitHubEventClient
 from github_webhooks.test.utils import mock_pull_request_payload
