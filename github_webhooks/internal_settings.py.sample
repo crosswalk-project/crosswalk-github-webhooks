@@ -45,8 +45,9 @@ JIRA_VERIFY_SSL = True
 # The Jira project string used as a prefix for issues IDs
 JIRA_PROJECT = ''
 
-# The ID of the "Resolve" transition
-JIRA_TRANSITION_RESOLVE_ID = ''
+# The name of the transition that corresponds to resolving a ticket
+# For example, "Resolve".
+JIRA_TRANSITION_RESOLVE_NAME = ''
 
 # The ID of the "Fixed" resolution
 JIRA_RESOLUTION_FIXED_ID = ''

@@ -38,6 +38,17 @@ class JiraHelper:
                                                   settings.JIRA_PASSWORD))
         return self.jira
 
+    def _get_resolve_transition(self, issue):
+        """
+        Returns the JIRA transition corresponding to "Resolve" for the given
+        issue, or None if such a transition does not exist for the issue at its
+        current state.
+        """
+        for transition in self._jira().transitions(issue):
+            if transition['name'] == settings.JIRA_TRANSITION_RESOLVE_NAME:
+                return transition
+        return None
+
     def comment_issue(self, issue_id, payload):
         comment = open_comment_template.format(
             user_id=payload['pull_request']['user']['login'],
@@ -61,12 +72,19 @@ class JiraHelper:
             pr_number=payload['pull_request']['number'],
             pr_url=payload['pull_request']['html_url'])
 
+        issue = self._jira().issue(issue_id)
+        resolve_transition = self._get_resolve_transition(issue)
+
+        if resolve_transition is None:
+            logging.warn('Issue %s does not have a valid transition to '
+                         'the "Resolve" state.' % issue_id)
+            return
+
         try:
             self._jira().add_comment(issue_id, comment)
-            issue = self._jira().issue(issue_id)
             self._jira().transition_issue(
                 issue,
-                settings.JIRA_TRANSITION_RESOLVE_ID,
+                resolve_transition['id'],
                 resolution={'id': settings.JIRA_RESOLUTION_FIXED_ID})
         except JIRAError as e:
             logging.error('Could not resolve issue %s: %s' %
