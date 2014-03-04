@@ -51,8 +51,8 @@ class JiraHelper:
         try:
             self._jira().add_comment(issue_id, comment)
         except JIRAError as e:
-            logging.info('Could not comment issue %s: %s' %
-                        (issue_id, e.text))
+            logging.error('Could not comment issue %s: %s' %
+                          (issue_id, e.text))
 
     def resolve_issue(self, issue_id, payload):
         comment = close_comment_template.format(
@@ -69,5 +69,5 @@ class JiraHelper:
                 settings.JIRA_TRANSITION_RESOLVE_ID,
                 resolution={'id': settings.JIRA_RESOLUTION_FIXED_ID})
         except JIRAError as e:
-            logging.info('Could not resolve issue %s: %s' %
-                        (issue_id, e.text))
+            logging.error('Could not resolve issue %s: %s' %
+                          (issue_id, e.text))
