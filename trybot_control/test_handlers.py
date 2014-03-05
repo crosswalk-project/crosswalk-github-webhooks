@@ -19,8 +19,6 @@ class HandlePullRequestTestCase(TestCase):
     @mock.patch('requests.post')
     @mock.patch('requests.get')
     def test_trybot_payload(self, mock_requests_get, mock_requests_post):
-        payload = mock_pull_request_payload()
-
         get_response = mock.Mock()
         get_response.status_code = 200
         get_response.text = '+++ some/file\n--- some/file\n+ new line\n'
@@ -35,7 +33,14 @@ class HandlePullRequestTestCase(TestCase):
         mock_requests_post.side_effects = (post_response_comment,
                                            post_response_send_to_trybot)
 
+        payload = mock_pull_request_payload()
+        payload['pull_request']['base']['ref'] = 'crosswalk-4'
+        response = self.client.post(self.url, payload)
         self.assertEqual(PullRequest.objects.count(), 0)
+        self.assertEqual(mock_requests_get.call_count, 0)
+        self.assertEqual(mock_requests_post.call_count, 0)
+
+        payload = mock_pull_request_payload()
         response = self.client.post(self.url, payload)
         self.assertEqual(PullRequest.objects.count(), 1)
         self.assertEqual(mock_requests_post.call_count, 3)

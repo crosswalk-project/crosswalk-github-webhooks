@@ -52,11 +52,19 @@ def handle_pull_request(sender, **kwargs):
         logging.warn('Ignoring action type "%s".' % payload['action'])
         return
 
+    pull_request = payload['pull_request']
+
+    # For now, we are only interested in testing the master branch, and the Try
+    # scheduler in Buildbot does not allow one to filter jobs by branches (and
+    # we would end up adding a comment to the pull request even if we did not
+    # test it at all).
+    if pull_request['base']['ref'] != 'master':
+        return
+
     trybot_payload = make_trybot_payload(payload['pull_request'])
     if trybot_payload is None:
         return
 
-    pull_request = payload['pull_request']
     pull_request_number = pull_request['number']
     repo_path = pull_request['base']['repo']['full_name']
     sha = pull_request['head']['sha']
