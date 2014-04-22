@@ -41,19 +41,15 @@ def search_issues(pr_body):
            the issue is fixed by this PR>
     }
     """
-    issues = []
-    processed_issues = set()
+    issues = {}
     regexp = re.compile(r'(%s-\d+)' % settings.JIRA_PROJECT)
     for line in pr_body.splitlines():
-        match = regexp.search(line)
-        if not match:
-            continue
-        issue_id = match.group(1)
-        should_resolve = line.startswith('BUG=')
-        if issue_id not in processed_issues:
-            processed_issues.add(issue_id)
-            issues.append({'id': issue_id, 'resolve': should_resolve})
-    return issues
+        for issue in regexp.findall(line):
+            should_resolve = line.startswith('BUG=')
+            issues[issue] = {'id': issue, 'resolve': should_resolve}
+    # Create a list with the values in the dict.
+    flattened_issues = [v for v in issues.values()]
+    return flattened_issues
 
 
 @receiver(pull_request_changed)
