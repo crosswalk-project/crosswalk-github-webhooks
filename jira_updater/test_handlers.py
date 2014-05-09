@@ -12,6 +12,7 @@ from django.test.utils import override_settings
 
 from github_webhooks.test.utils import GitHubEventClient
 from github_webhooks.test.utils import mock_pull_request_payload
+from jira_updater.handlers import JiraHelper
 from jira_updater.handlers import handle_pull_request
 from jira_updater.handlers import search_issues
 
@@ -19,6 +20,20 @@ from jira_updater.handlers import search_issues
 class JiraUpdaterTestCase(TestCase):
     def setUp(self):
         settings.JIRA_PROJECT = 'PROJ'
+
+    @patch('jira_updater.jirahelper.JIRA')
+    def test_non_ascii_pr_title(self, jira_mock):
+        helper = JiraHelper()
+
+        payload = mock_pull_request_payload()
+        payload['pull_request']['title'] = 'Standard title'
+        helper.comment_issue('PROJ-42', payload)
+        jira_mock.return_value.add_comment.assert_called_with('PROJ-42', ANY)
+
+        payload = mock_pull_request_payload()
+        payload['pull_request']['title'] = u'Non-ASCII \u2018title\u2019'
+        helper.comment_issue('PROJ-42', payload)
+        jira_mock.return_value.add_comment.assert_called_with('PROJ-42', ANY)
 
     def test_regexp_no_issue(self):
         text = 'Text with no issue'

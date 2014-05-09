@@ -7,14 +7,14 @@ from jira.exceptions import JIRAError
 from django.conf import settings
 import logging
 
-open_comment_template = (
-    '(i) [{user_id}|{user_url}] referenced this issue in project'
-    ' [{repo_name}|{repo_url}]:\n\n*[Pull Request '
-    '{pr_number}|{pr_url}]* _"{pr_title}"_')
+open_comment_template = \
+    u'(i) [{user_id}|{user_url}] referenced this issue in project' \
+    u' [{repo_name}|{repo_url}]:\n\n*[Pull Request ' \
+    u'{pr_number}|{pr_url}]* _"{pr_title}"_'
 
-close_comment_template = (
-    '(/) [{user_id}|{user_url}] resolved this issue with '
-    '*[Pull Request {pr_number}|{pr_url}]*')
+close_comment_template = \
+    u'(/) [{user_id}|{user_url}] resolved this issue with ' \
+    u'*[Pull Request {pr_number}|{pr_url}]*'
 
 
 class JiraHelper:
