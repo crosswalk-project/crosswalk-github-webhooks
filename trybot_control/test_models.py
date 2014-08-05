@@ -17,6 +17,7 @@ class PullRequestTestCase(TestCase):
             number=42,
             head_sha='deadbeef',
             base_repo_path='foo/bar',
+            head_repo_path='user/bar-fork',
             comment_id=1234,
             status=STATUS_SUCCESS
         )
@@ -41,6 +42,7 @@ class PullRequestTestCase(TestCase):
             number=42,
             head_sha='deadbeef',
             base_repo_path='user/repo',
+            head_repo_path='another_user/bar-fork',
             comment_id=1234,
             status=STATUS_SUCCESS
         )
@@ -61,7 +63,7 @@ class PullRequestTestCase(TestCase):
         pr.report_builder_statuses()
 
         url = 'https://api.github.com/repos/user/repo/issues/comments/1234'
-        message = '''Testing patch series with deadbeef as its head.
+        message = '''Testing patch series with another_user/bar-fork@deadbeef as its head.
 
 Bot | Status
 --- | ------

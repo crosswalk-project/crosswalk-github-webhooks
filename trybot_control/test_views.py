@@ -23,6 +23,7 @@ class BuildbotEventTest(TestCase):
             number=97,
             head_sha=hashlib.sha1('somehash').hexdigest(),
             base_repo_path='crosswalk-project/crosswalk',
+            head_repo_path='user/crosswalk-fork',
             comment_id=1234)
 
         packets = [{
@@ -83,6 +84,7 @@ class BuildbotEventTest(TestCase):
             number=97,
             head_sha=hashlib.sha1('somehash').hexdigest(),
             base_repo_path='crosswalk-project/crosswalk',
+            head_repo_path='user/crosswalk-fork',
             comment_id=1234)
         TrybotBuild.objects.create(
             pull_request=pr,
@@ -157,6 +159,7 @@ class BuildbotEventTest(TestCase):
             number=97,
             head_sha=hashlib.sha1('somehash').hexdigest(),
             base_repo_path='crosswalk-project/crosswalk',
+            head_repo_path='user/crosswalk-fork',
             comment_id=1234)
         TrybotBuild.objects.create(
             pull_request=pr,

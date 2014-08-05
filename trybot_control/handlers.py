@@ -67,11 +67,13 @@ def handle_pull_request(sender, **kwargs):
 
     pull_request_number = pull_request['number']
     base_repo_path = pull_request['base']['repo']['full_name']
+    head_repo_path = pull_request['head']['repo']['full_name']
     sha = pull_request['head']['sha']
 
     comment_url = 'https://api.github.com/repos/%s/issues/%d/comments' % \
                   (base_repo_path, pull_request_number)
-    message = 'The patch series with %s as head will be tested soon.' % sha
+    message = 'The patch series with %s@%s as head will be tested soon.' % \
+              (head_repo_path, sha)
     response = requests.post(comment_url,
                              auth=(settings.GITHUB_USERNAME,
                                    settings.GITHUB_ACCESS_TOKEN),
@@ -81,6 +83,7 @@ def handle_pull_request(sender, **kwargs):
     pr_object = PullRequest.objects.create(number=pull_request_number,
                                            head_sha=sha,
                                            base_repo_path=base_repo_path,
+                                           head_repo_path=head_repo_path,
                                            comment_id=comment_id)
     pr_object.report_build_status()
 

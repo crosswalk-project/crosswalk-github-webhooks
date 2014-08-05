@@ -37,6 +37,8 @@ class PullRequest(models.Model):
     head_sha = models.CharField(max_length=40)
     # Pull request target repository path in the format "owner/repo".
     base_repo_path = models.CharField(max_length=256)
+    # Pull request source repository path in the format "owner/repo".
+    head_repo_path = models.CharField(max_length=256)
     # ID of the Trybot comment related to this pull request.
     comment_id = models.IntegerField()
     # State of the build as a whole (taking into account all builders).
@@ -67,8 +69,8 @@ class PullRequest(models.Model):
         Creates or updates the Trybot comment in a pull request with the status
         of all builders registered so far.
         """
-        message =  'Testing patch series with %s as its head.\n\n' % \
-                   self.head_sha
+        message =  'Testing patch series with %s@%s as its head.\n\n' % \
+                   (self.head_repo_path, self.head_sha)
         message += 'Bot | Status\n'
         message += '--- | ------\n'
 
