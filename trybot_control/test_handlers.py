@@ -71,7 +71,7 @@ class HandlePullRequestTestCase(TestCase):
         pr = PullRequest.objects.get(pk=1)
         self.assertEqual(pr.number, 42)
         self.assertEqual(pr.head_sha, 'deadbeef')
-        self.assertEqual(pr.repo_path, 'crosswalk-project/crosswalk')
+        self.assertEqual(pr.base_repo_path, 'crosswalk-project/crosswalk')
         self.assertEqual(pr.status, STATUS_PENDING)
         self.assertEqual(pr.needs_sync, True)
 
@@ -82,7 +82,7 @@ class HandlePullRequestTestCase(TestCase):
         pr = PullRequest.objects.get(pk=2)
         self.assertEqual(pr.number, 42)
         self.assertEqual(pr.head_sha, 'f00b4r')
-        self.assertEqual(pr.repo_path, 'crosswalk-project/crosswalk')
+        self.assertEqual(pr.base_repo_path, 'crosswalk-project/crosswalk')
         self.assertEqual(pr.status, STATUS_PENDING)
         self.assertEqual(pr.needs_sync, True)
 

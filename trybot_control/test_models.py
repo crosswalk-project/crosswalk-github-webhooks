@@ -16,7 +16,7 @@ class PullRequestTestCase(TestCase):
         pr = PullRequest.objects.create(
             number=42,
             head_sha='deadbeef',
-            repo_path='foo/bar',
+            base_repo_path='foo/bar',
             comment_id=1234,
             status=STATUS_SUCCESS
         )
@@ -40,7 +40,7 @@ class PullRequestTestCase(TestCase):
         pr = PullRequest.objects.create(
             number=42,
             head_sha='deadbeef',
-            repo_path='user/repo',
+            base_repo_path='user/repo',
             comment_id=1234,
             status=STATUS_SUCCESS
         )

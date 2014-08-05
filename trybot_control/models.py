@@ -35,8 +35,8 @@ class PullRequest(models.Model):
     number = models.IntegerField()
     # SHA1 of the tip of the branch to be merged.
     head_sha = models.CharField(max_length=40)
-    # Repository path in the format "owner/repo".
-    repo_path = models.CharField(max_length=256)
+    # Pull request target repository path in the format "owner/repo".
+    base_repo_path = models.CharField(max_length=256)
     # ID of the Trybot comment related to this pull request.
     comment_id = models.IntegerField()
     # State of the build as a whole (taking into account all builders).
@@ -54,7 +54,7 @@ class PullRequest(models.Model):
         reported so far). Compare with |report_builder_statues|.
         """
         url = 'https://api.github.com/repos/%s/statuses/%s' % \
-              (self.repo_path, self.head_sha)
+              (self.base_repo_path, self.head_sha)
         payload = {'state': self.status,
                    'description': self.get_status_display(),
                    'target_url': ''}
@@ -79,7 +79,7 @@ class PullRequest(models.Model):
                         builder.build_number)
 
         url = 'https://api.github.com/repos/%s/issues/comments/%d' % \
-              (self.repo_path, self.comment_id)
+              (self.base_repo_path, self.comment_id)
         requests.patch(url,
                        auth=(settings.GITHUB_USERNAME,
                              settings.GITHUB_ACCESS_TOKEN),
