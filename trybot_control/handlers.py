@@ -22,10 +22,10 @@ def make_trybot_payload(pull_request):
     Gets any relevant data from a pull request JSON object sent by GitHub and
     uses that to build a dict with the keys used by try_job_base.py.
     """
-    patch_response = requests.get(pull_request['diff_url'])
+    patch_response = requests.get(pull_request['patch_url'])
     if patch_response.status_code != 200:
         logging.error('Fetching %s from GitHub failed with status code %d.' % \
-                      (pull_request['diff_url'], patch_response.status_code))
+                      (pull_request['patch_url'], patch_response.status_code))
         return None
 
     return {

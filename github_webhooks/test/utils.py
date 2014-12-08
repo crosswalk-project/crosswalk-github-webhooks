@@ -44,7 +44,7 @@ def mock_pull_request_payload():
         'action': 'opened',
         'pull_request': {
             'number': 42,
-            'diff_url': 'https://path/to/42.diff',
+            'patch_url': 'https://path/to/42.patch',
             'title': 'Hello world',
             'body': 'some description',
             'html_url': 'http://pr.com',
