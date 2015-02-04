@@ -54,12 +54,17 @@ def handle_pull_request(sender, **kwargs):
 
     pull_request = payload['pull_request']
 
-    # For now, we are only interested in testing the master branch, and the Try
-    # scheduler in Buildbot does not allow one to filter jobs by branches (and
-    # we would end up adding a comment to the pull request even if we did not
-    # test it at all).
-    if pull_request['base']['ref'] != 'master':
-        return
+    # FIXME(rakuco): Replace the 'crosswalk-lite' hackish check below with a
+    # proper flow where a comment gets posted only if there are builders to
+    # process the patch on the right branch.
+    target_project = pull_request['base']['repo']['name']
+    target_branch = pull_request['base']['ref']
+    if target_project == 'crosswalk':
+        if target_branch not in ('master', 'crosswalk-lite'):
+            return
+    else:
+        if target_branch != 'master':
+            return
 
     trybot_payload = make_trybot_payload(payload['pull_request'])
     if trybot_payload is None:

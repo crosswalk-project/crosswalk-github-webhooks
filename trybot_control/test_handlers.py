@@ -56,6 +56,20 @@ class HandlePullRequestTestCase(TestCase):
                             'issue': PullRequest.objects.get(pk=1).pk}
         self.assertEqual(payload, expected_payload)
 
+        # FIXME(rakuco): Remove this part of the test once the 'crosswalk-lite'
+        # hackish check is removed from handlers.py.
+        payload = mock_pull_request_payload()
+        payload['pull_request']['base']['ref'] = 'crosswalk-lite'
+        response = self.client.post(self.url, payload)
+        self.assertEqual(PullRequest.objects.count(), 2)
+        self.assertEqual(mock_requests_post.call_count, 6)
+        payload = mock_pull_request_payload()
+        payload['pull_request']['base']['repo']['name'] = 'v8-crosswalk'
+        payload['pull_request']['base']['ref'] = 'crosswalk-lite'
+        response = self.client.post(self.url, payload)
+        self.assertEqual(PullRequest.objects.count(), 2)
+        self.assertEqual(mock_requests_post.call_count, 6)
+
     @mock.patch('requests.post')
     @mock.patch('requests.get')
     def test_success(self, mock_requests_get, mock_requests_post):
