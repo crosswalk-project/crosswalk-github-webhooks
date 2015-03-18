@@ -13,3 +13,9 @@ Slow actions such as performing network requests are not done in the views or
 the signal handlers, as we would otherwise block critical sections of the code.
 Instead, we rely on custom commands that are run at any later time to do any
 sort of required processing.
+
+For example, one could have a cron job that calls
+
+    python manage.py sync_trybot_status
+
+to update the pull request status on GitHub every N minutes.
