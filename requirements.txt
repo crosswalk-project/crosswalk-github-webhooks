@@ -1,4 +1,4 @@
-Django==1.6.1
+Django==1.6.11
 jira-python==0.16
 mock==1.0.1
 requests==2.2.1
