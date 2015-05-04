@@ -8,6 +8,7 @@ import json
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound
+from django.utils.crypto import constant_time_compare
 from django.views.decorators.http import require_POST
 
 from github_webhooks.signals import pull_request_changed
@@ -20,12 +21,11 @@ def is_valid_github_request(request):
     the contents of the X-Hub-Signature header (a SHA1 HMAC of the request
     body) matches our own calculation.
     """
-    github_signature = request.META.get('HTTP_X_HUB_SIGNATURE', None)
+    github_signature = request.META.get('HTTP_X_HUB_SIGNATURE', '')
     computed_signature = 'sha1=%s' % \
                          hmac.new(settings.GITHUB_HOOK_SECRET,
                                   request.body, hashlib.sha1).hexdigest()
-
-    return github_signature == computed_signature
+    return constant_time_compare(github_signature, computed_signature)
 
 
 @require_POST
