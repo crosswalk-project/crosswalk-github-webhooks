@@ -20,6 +20,8 @@ from jira_updater.handlers import search_issues
 class JiraUpdaterTestCase(TestCase):
     def setUp(self):
         settings.JIRA_PROJECT = 'PROJ'
+        self.client = GitHubEventClient()
+        self.url = reverse('jira_updater.views.handle_pull_request')
 
     @patch('jira_updater.jirahelper.JIRA')
     def test_non_ascii_pr_title(self, jira_mock):
@@ -94,11 +96,11 @@ class JiraUpdaterTestCase(TestCase):
         payload = mock_pull_request_payload()
 
         payload['pull_request']['body'] = 'This PR does not fix any issue'
-        handle_pull_request(None, payload=payload)
+        response = self.client.post(self.url, payload)
         self.assertEqual(jira_mock.called, False)
 
         payload['pull_request']['body'] = None
-        handle_pull_request(None, payload=payload)
+        response = self.client.post(self.url, payload)
         self.assertEqual(jira_mock.called, False)
 
     @patch('jira_updater.jirahelper.JIRA')
@@ -109,7 +111,7 @@ class JiraUpdaterTestCase(TestCase):
             'mentioned below:'\
             '\n'\
             'BUG=https://crosswalk-project.org/jira/bug=PROJ-2'
-        handle_pull_request(None, payload=payload)
+        response = self.client.post(self.url, payload)
         jira_mock.return_value.add_comment.assert_called_with('PROJ-2', ANY)
 
     @override_settings(JIRA_TRANSITION_RESOLVE_NAME='Resolve')
@@ -130,7 +132,7 @@ class JiraUpdaterTestCase(TestCase):
             {'id': '1', 'name': 'Triage'},
             {'id': '2', 'name': 'Resolve'},
         )
-        handle_pull_request(None, payload=payload)
+        response = self.client.post(self.url, payload)
         jira_mock.return_value.issue.assert_called_with('PROJ-2')
         jira_mock.return_value.add_comment.assert_called_with('PROJ-2', ANY)
         jira_mock.return_value.transition_issue.assert_called_with(
@@ -146,7 +148,7 @@ class JiraUpdaterTestCase(TestCase):
             {'id': '2', 'name': 'Close'},
             {'id': '5', 'name': 'New'},
         )
-        handle_pull_request(None, payload=payload)
+        response = self.client.post(self.url, payload)
         self.assertTrue(jira_mock.return_value.transitions.call_count, 1)
         self.assertTrue(jira_mock.return_value.add_comment.call_count, 0)
         self.assertTrue(jira_mock.return_value.transition_issue.call_count, 0)

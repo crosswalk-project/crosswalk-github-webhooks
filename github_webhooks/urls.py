@@ -5,8 +5,15 @@
 from django.conf.urls import patterns, include, url
 
 
-urlpatterns = patterns('github_webhooks.views',
-    url(r'^github-hooks/pull-request$', 'dispatch_pull_request'),
+urlpatterns = patterns('',
+    # Kept for compatibility while GitHub settings are updated.
+    url(r'^github-hooks/pull-request$',
+        'trybot_control.views.handle_pull_request'),
+
+    url(r'^github-hooks/jira$',
+        'jira_updater.views.handle_pull_request'),
+    url(r'^github-hooks/trybot$',
+        'trybot_control.views.handle_pull_request'),
 )
 
 urlpatterns += patterns('',

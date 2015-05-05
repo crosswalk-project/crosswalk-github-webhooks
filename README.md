@@ -1,18 +1,23 @@
 This is a collection of GitHub web hook handlers used by the Crosswalk project.
 
-It is a somewhat unconventional Django website, as there are no templates and
-the actual processing of the hooks is done in signal handlers.
+There are no templates because we just process events sent by GitHub and do not
+need to show anything to users directly.
 
-In a nutshell, when a registered web hook is sent by GitHub to
-`/github-webhooks/<event name>` it is parsed by one of the `dispatch_*` views
-in the `github_webhooks` app, validated and the payload is sent in a signal to
-all the interested applications, which can then talk to Buildbot, post a
-comment in a JIRA ticket etc.
+## jira_updater
 
-Slow actions such as performing network requests are not done in the views or
-the signal handlers, as we would otherwise block critical sections of the code.
-Instead, we rely on custom commands that are run at any later time to do any
-sort of required processing.
+This application watches the creation and closing of pull requests, and updates
+JIRA tickets based on the occurence of certain keywords in the pull request
+message.
+
+## trybot_control
+
+This application receives pull request events and talks to Buildbot so that a
+patch is processed by our slaves whenever it is sent or updated. The results
+are then posted back to the pull request as a comment.
+
+Slow actions such as posting those comments are done asynchronously, as they
+would otherwise block critical sections of the code. Instead, we rely on custom
+commands that are run at any later time to do any sort of required processing.
 
 For example, one could have a cron job that calls
 

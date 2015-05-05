@@ -25,10 +25,11 @@ import logging
 import re
 
 from django.conf import settings
-from django.dispatch import receiver
+from django.http import HttpResponse
+from django.views.decorators.http import require_POST
 from jirahelper import JiraHelper
 
-from github_webhooks.signals import pull_request_changed
+from github_webhooks.decorators import add_github_payload, require_github_signature
 
 
 def search_issues(pr_body):
@@ -52,16 +53,18 @@ def search_issues(pr_body):
     return flattened_issues
 
 
-@receiver(pull_request_changed)
-def handle_pull_request(sender, **kwargs):
-    payload = kwargs['payload']
+@require_POST
+@require_github_signature
+@add_github_payload
+def handle_pull_request(request):
+    payload = request.payload
     pr_body = payload['pull_request']['body']
     pr_action = payload['action']
 
     # This happens when a pull request only has a title and no message body.
     if pr_body is None:
         logging.info('Pull request %d has an empty body. Skipping.')
-        return
+        return HttpResponse()
 
     jira = JiraHelper()
     for issue in search_issues(pr_body):
@@ -76,3 +79,5 @@ def handle_pull_request(sender, **kwargs):
         else:
             logging.debug('Nothing to do with issue %s' %
                           issue['id'])
+
+    return HttpResponse()
