@@ -171,7 +171,7 @@ def handle_pull_request(request):
 
     trybot_payload = make_trybot_payload(payload['pull_request'])
     if trybot_payload is None:
-        return HttpResponse()
+        return HttpResponseServerError()
 
     pull_request_number = pull_request['number']
     base_repo_path = pull_request['base']['repo']['full_name']

@@ -365,7 +365,7 @@ class PullRequestTests(TestCase):
         mock_response.status_code = 404
         mock_requests_get.return_value = mock_response
         response = self.client.post(self.url, payload)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 500)
         self.assertEqual(PullRequest.objects.count(), 0)
 
     def test_ignored_action(self):
