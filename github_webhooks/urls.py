@@ -6,10 +6,6 @@ from django.conf.urls import patterns, include, url
 
 
 urlpatterns = patterns('',
-    # Kept for compatibility while GitHub settings are updated.
-    url(r'^github-hooks/pull-request$',
-        'trybot_control.views.handle_pull_request'),
-
     url(r'^github-hooks/jira$',
         'jira_updater.views.handle_pull_request'),
     url(r'^github-hooks/trybot$',
