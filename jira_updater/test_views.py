@@ -140,6 +140,9 @@ class JiraUpdaterTestCase(TestCase):
             '2',
             resolution={'id': settings.JIRA_RESOLUTION_FIXED_ID}
             )
+        self.assertEqual(jira_mock.return_value.transitions.call_count, 1)
+        self.assertEqual(jira_mock.return_value.add_comment.call_count, 1)
+        self.assertEqual(jira_mock.return_value.transition_issue.call_count, 1)
 
         issue_mock = Mock()
         jira_mock.return_value.issue.return_value = issue_mock
@@ -149,6 +152,6 @@ class JiraUpdaterTestCase(TestCase):
             {'id': '5', 'name': 'New'},
         )
         response = self.client.post(self.url, payload)
-        self.assertTrue(jira_mock.return_value.transitions.call_count, 1)
-        self.assertTrue(jira_mock.return_value.add_comment.call_count, 0)
-        self.assertTrue(jira_mock.return_value.transition_issue.call_count, 0)
+        self.assertEqual(jira_mock.return_value.transitions.call_count, 2)
+        self.assertEqual(jira_mock.return_value.add_comment.call_count, 1)
+        self.assertEqual(jira_mock.return_value.transition_issue.call_count, 1)
