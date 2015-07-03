@@ -81,10 +81,10 @@ class JiraHelper:
             return
 
         try:
-            self._jira().add_comment(issue_id, comment)
             self._jira().transition_issue(
                 issue,
                 resolve_transition['id'],
+                comment=comment,
                 resolution={'id': settings.JIRA_RESOLUTION_FIXED_ID})
         except JIRAError as e:
             logging.error('Could not resolve issue %s: %s' %
