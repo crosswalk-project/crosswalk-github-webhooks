@@ -12,9 +12,9 @@ from django.test.utils import override_settings
 
 from github_webhooks.test.utils import GitHubEventClient
 from github_webhooks.test.utils import mock_pull_request_payload
-from jira_updater.handlers import JiraHelper
-from jira_updater.handlers import handle_pull_request
-from jira_updater.handlers import search_issues
+from jira_updater.jirahelper import JiraHelper
+from jira_updater.views import handle_pull_request
+from jira_updater.views import search_issues
 
 
 class JiraUpdaterTestCase(TestCase):
