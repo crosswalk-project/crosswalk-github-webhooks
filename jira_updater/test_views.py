@@ -19,7 +19,7 @@ from jira_updater.views import search_issues
 
 class JiraUpdaterTestCase(TestCase):
     def setUp(self):
-        settings.JIRA_PROJECT = 'PROJ'
+        settings.JIRA_PROJECTS = ('PROJ', 'OTHERPROJ')
         self.client = GitHubEventClient()
         self.url = reverse('jira_updater.views.handle_pull_request')
 
@@ -47,6 +47,18 @@ class JiraUpdaterTestCase(TestCase):
         issues = search_issues(text)
         self.assertEqual(len(issues), 1)
 
+        text = 'Text mentioning issue OTHERPROJ-34'
+        issues = search_issues(text)
+        self.assertEqual(len(issues), 1)
+
+        text = 'Text mentioning issue PROJ-1 and OTHERPROJ-42.'
+        issues = search_issues(text)
+        self.assertEqual(len(issues), 2)
+
+        text = 'Text mentioning issue INVALID-567.'
+        issues = search_issues(text)
+        self.assertEqual(len(issues), 0)
+
     def test_should_resolve_issue(self):
         text = 'Pull request. Does not reference any issues.'
         issues = search_issues(text)
@@ -57,16 +69,32 @@ class JiraUpdaterTestCase(TestCase):
         self.assertItemsEqual(issues,
                               [{'id': 'PROJ-789', 'resolve': False}])
 
+        text = 'Related, does not solve, a single issue, OTHERPROJ-34.'
+        issues = search_issues(text)
+        self.assertItemsEqual(issues,
+                              [{'id': 'OTHERPROJ-34', 'resolve': False}])
+
         text = 'Related but does not solve PROJ-1234 and\nPROJ-456.'
         issues = search_issues(text)
         self.assertItemsEqual(issues,
                               [{'id': 'PROJ-1234', 'resolve': False},
                                {'id': 'PROJ-456', 'resolve': False}])
 
+        text = 'Related but does not solve PROJ-1234 or\nOTHERPROJ-456.'
+        issues = search_issues(text)
+        self.assertItemsEqual(issues,
+                              [{'id': 'PROJ-1234', 'resolve': False},
+                               {'id': 'OTHERPROJ-456', 'resolve': False}])
+
         text = 'This is related to PROJ-1234 and\nFOOBAR-456.'
         issues = search_issues(text)
         self.assertItemsEqual(issues,
                               [{'id': 'PROJ-1234', 'resolve': False}])
+
+        text = 'This is related to OTHERPROJ-1234 and\nFOOBAR-456.'
+        issues = search_issues(text)
+        self.assertItemsEqual(issues,
+                              [{'id': 'OTHERPROJ-1234', 'resolve': False}])
 
         text = 'Patch to fix PROJ-789, related to PROJ-23.\n\nBUG=PROJ-789'
         issues = search_issues(text)
@@ -74,11 +102,23 @@ class JiraUpdaterTestCase(TestCase):
                               [{'id': 'PROJ-789', 'resolve': True},
                                {'id': 'PROJ-23', 'resolve': False}])
 
+        text = 'Patch to fix PROJ-789, related to OTHERPROJ-2.\n\nBUG=PROJ-789'
+        issues = search_issues(text)
+        self.assertItemsEqual(issues,
+                              [{'id': 'PROJ-789', 'resolve': True},
+                               {'id': 'OTHERPROJ-2', 'resolve': False}])
+
         text = 'Bug fix.\n\nBUG=PROJ-123\nBUG=PROJ-456'
         issues = search_issues(text)
         self.assertItemsEqual(issues,
                               [{'id': 'PROJ-123', 'resolve': True},
                                {'id': 'PROJ-456', 'resolve': True}])
+
+        text = 'Bug fix.\n\nBUG=PROJ-123\nBUG=OTHERPROJ-456'
+        issues = search_issues(text)
+        self.assertItemsEqual(issues,
+                              [{'id': 'PROJ-123', 'resolve': True},
+                               {'id': 'OTHERPROJ-456', 'resolve': True}])
 
         text = 'Wrong formatting. BUG=PROJ-123'
         issues = search_issues(text)
@@ -90,6 +130,12 @@ class JiraUpdaterTestCase(TestCase):
         self.assertItemsEqual(issues,
                               [{'id': 'PROJ-123', 'resolve': False},
                                {'id': 'PROJ-456', 'resolve': True}])
+
+        text = 'A bug fix. BUG=PROJ-123\nBUG=OTHERPROJ-456'
+        issues = search_issues(text)
+        self.assertItemsEqual(issues,
+                              [{'id': 'PROJ-123', 'resolve': False},
+                               {'id': 'OTHERPROJ-456', 'resolve': True}])
 
     @patch('jira_updater.jirahelper.JIRA')
     def test_no_issue(self, jira_mock):

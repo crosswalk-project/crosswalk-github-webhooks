@@ -43,7 +43,9 @@ def search_issues(pr_body):
     }
     """
     issues = {}
-    regexp = re.compile(r'(%s-\d+)' % settings.JIRA_PROJECT)
+    # This becomes something like "((?:FOO|BAR)-\d+)" to match all prefixes.
+    regexp_pattern = r'((?:%s)-\d+)' % '|'.join(settings.JIRA_PROJECTS)
+    regexp = re.compile(regexp_pattern)
     for line in pr_body.splitlines():
         for issue in regexp.findall(line):
             should_resolve = line.startswith('BUG=')
