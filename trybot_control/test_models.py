@@ -68,7 +68,7 @@ class PullRequestTestCase(TestCase):
 Bot | Status
 --- | ------
 crosswalk-linux | [In Progress](http://tryb.ot/builders/crosswalk-linux/builds/42)
-Crosswalk Tizen | [**SUCCESS** :green_heart:](http://tryb.ot/builders/Crosswalk Tizen/builds/34)
+Crosswalk Tizen | [**SUCCESS** :green_heart:](http://tryb.ot/builders/Crosswalk%20Tizen/builds/34)
 '''
 
         self.assertEqual(mock_request.call_count, 1)
@@ -84,7 +84,7 @@ Crosswalk Tizen | [**SUCCESS** :green_heart:](http://tryb.ot/builders/Crosswalk 
         )
         pr.report_builder_statuses()
 
-        message += 'XWalk Windows | [**FAILED** :broken_heart:](http://tryb.ot/builders/XWalk Windows/builds/3)\n'
+        message += 'XWalk Windows | [**FAILED** :broken_heart:](http://tryb.ot/builders/XWalk%20Windows/builds/3)\n'
 
         self.assertEqual(mock_request.call_count, 2)
         self.assertEqual(mock_request.call_args,

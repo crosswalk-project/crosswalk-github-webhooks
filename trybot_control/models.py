@@ -4,6 +4,7 @@
 
 import json
 import requests
+import urllib
 
 from django.conf import settings
 from django.db import models
@@ -77,7 +78,8 @@ class PullRequest(models.Model):
         for builder in self.trybotbuild_set.all():
             message += '%s | [%s](%s/builders/%s/builds/%d)\n' % \
                        (builder.builder_name, builder.get_status_display(),
-                        settings.TRYBOT_BASE_URL, builder.builder_name,
+                        settings.TRYBOT_BASE_URL,
+                        urllib.quote(builder.builder_name),
                         builder.build_number)
 
         url = 'https://api.github.com/repos/%s/issues/comments/%d' % \
