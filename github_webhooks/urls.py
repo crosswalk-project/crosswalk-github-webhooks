@@ -7,7 +7,7 @@ from django.conf.urls import patterns, include, url
 
 urlpatterns = patterns('',
     url(r'^github-hooks/jira$',
-        'jira_updater.views.handle_pull_request'),
+        'updater_for_jira.views.handle_pull_request'),
     url(r'^github-hooks/trybot$',
         'trybot_control.views.handle_pull_request'),
 )

@@ -3,12 +3,6 @@ This is a collection of GitHub web hook handlers used by the Crosswalk project.
 There are no templates because we just process events sent by GitHub and do not
 need to show anything to users directly.
 
-## jira_updater
-
-This application watches the creation and closing of pull requests, and updates
-JIRA tickets based on the occurence of certain keywords in the pull request
-message.
-
 ## trybot_control
 
 This application receives pull request events and talks to Buildbot so that a
@@ -24,3 +18,9 @@ For example, one could have a cron job that calls
     python manage.py sync_trybot_status
 
 to update the pull request status on GitHub every N minutes.
+
+## updater_for_jira
+
+This application watches the creation and closing of pull requests, and updates
+JIRA tickets based on the occurence of certain keywords in the pull request
+message.

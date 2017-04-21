@@ -12,18 +12,18 @@ from django.test.utils import override_settings
 
 from github_webhooks.test.utils import GitHubEventClient
 from github_webhooks.test.utils import mock_pull_request_payload
-from jira_updater.jirahelper import JiraHelper
-from jira_updater.views import handle_pull_request
-from jira_updater.views import search_issues
+from updater_for_jira.jirahelper import JiraHelper
+from updater_for_jira.views import handle_pull_request
+from updater_for_jira.views import search_issues
 
 
 class JiraUpdaterTestCase(TestCase):
     def setUp(self):
         settings.JIRA_PROJECTS = ('PROJ', 'OTHERPROJ')
         self.client = GitHubEventClient()
-        self.url = reverse('jira_updater.views.handle_pull_request')
+        self.url = reverse('updater_for_jira.views.handle_pull_request')
 
-    @patch('jira_updater.jirahelper.JIRA')
+    @patch('updater_for_jira.jirahelper.JIRA')
     def test_non_ascii_pr_title(self, jira_mock):
         helper = JiraHelper()
 
@@ -137,7 +137,7 @@ class JiraUpdaterTestCase(TestCase):
                               [{'id': 'PROJ-123', 'resolve': False},
                                {'id': 'OTHERPROJ-456', 'resolve': True}])
 
-    @patch('jira_updater.jirahelper.JIRA')
+    @patch('updater_for_jira.jirahelper.JIRA')
     def test_no_issue(self, jira_mock):
         payload = mock_pull_request_payload()
 
@@ -149,7 +149,7 @@ class JiraUpdaterTestCase(TestCase):
         response = self.client.post(self.url, payload)
         self.assertEqual(jira_mock.called, False)
 
-    @patch('jira_updater.jirahelper.JIRA')
+    @patch('updater_for_jira.jirahelper.JIRA')
     def test_comment_issue(self, jira_mock):
         payload = mock_pull_request_payload()
         payload['pull_request']['body'] = \
@@ -161,7 +161,7 @@ class JiraUpdaterTestCase(TestCase):
         jira_mock.return_value.add_comment.assert_called_with('PROJ-2', ANY)
 
     @override_settings(JIRA_TRANSITION_RESOLVE_NAME='Resolve')
-    @patch('jira_updater.jirahelper.JIRA')
+    @patch('updater_for_jira.jirahelper.JIRA')
     def test_resolve_issue(self, jira_mock):
         payload = mock_pull_request_payload()
         payload['action'] = 'closed'
