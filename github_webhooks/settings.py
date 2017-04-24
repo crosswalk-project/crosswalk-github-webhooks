@@ -16,7 +16,7 @@ DATABASES = {
 INSTALLED_APPS = (
     'github_webhooks',
     'trybot_control',
-    'jira_updater'
+    'updater_for_jira'
 )
 
 MIDDLEWARE_CLASSES = (
