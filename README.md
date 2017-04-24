@@ -22,5 +22,7 @@ to update the pull request status on GitHub every N minutes.
 ## updater_for_jira
 
 This application watches the creation and closing of pull requests, and updates
-JIRA tickets based on the occurence of certain keywords in the pull request
+JIRA® tickets based on the occurence of certain keywords in the pull request
 message.
+
+JIRA® is an Atlassian trademark.
